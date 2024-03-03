@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="zviewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Expense Tracker App</title>
+</head>
+<body>
+    <h1>Expense Tracker App</h1>
+    <div class="input-section">
+        <label for="category-select">Category:</label>
+        <select id="category-select">
+            <option value="Food & Beverage">Food & Beverage</option>
+            <option value="Rent">Rent</option>
+            <option value="Transport">Transport</option>
+            <option value="Relaxing">Relaxing</option>
+        </select>
+        <label for="amount-input">Amount:</label>
+        <input type="number" id="amount-input">
+        <label for="date-input">Date:</label>
+        <input type="date" id="date-input">
+        <button id="add-btn">Add</button>
+    </div>
+    <div class="expenses-list">
+        <h2>Expenses List</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Category</th>
+                    <th>Amount</th>
+                    <th>Date</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody id="expnese-table-body">
+
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td>Total:</td>
+                    <td id="total-amount"></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-analytics.js";
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+      
+        // Your web app's Firebase configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        const firebaseConfig = {
+          apiKey: "AIzaSyBpnaCFGvjlCRpHVHFwmFlsplpbQ_wV3z0",
+          authDomain: "budget-tracker-19d48.firebaseapp.com",
+          projectId: "budget-tracker-19d48",
+          storageBucket: "budget-tracker-19d48.appspot.com",
+          messagingSenderId: "317863560989",
+          appId: "1:317863560989:web:e9a1d5e8ecd6ef489b03f4",
+          measurementId: "G-PNYXEPMKN8"
+        };
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+      </script>
+    
+    <!-- Add Firebase SDK -->
+    <script src="firebase-app.js"></script>
+    <script src="firebase-firestore.js"></script>
+    <script src="script.js"></script>
+
+</body>
+</html>
