@@ -1,95 +1,92 @@
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+// Your web app's Firebase configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyBpnaCFGvjlCRpHVHFwmFlsplpbQ_wV3z0",
-    authDomain: "budget-tracker-19d48.firebaseapp.com",
-    projectId: "budget-tracker-19d48",
-    storageBucket: "budget-tracker-19d48.appspot.com",
-    messagingSenderId: "317863560989",
-    appId: "1:317863560989:web:e9a1d5e8ecd6ef489b03f4",
-    measurementId: "G-PNYXEPMKN8"
+    apiKey: "AIzaSyCMLJj_5Llr2WQUIHFDgWR9hVoteGkavT8",
+    authDomain: "nimisha-ed40a.firebaseapp.com",
+    projectId: "nimisha-ed40a",
+    storageBucket: "nimisha-ed40a.appspot.com",
+    messagingSenderId: "392636354266",
+    appId: "1:392636354266:web:3a86e8d90b27d48494dfe3",
+    measurementId: "G-Q3J84ENE8D"
   };
 
-let expenses = [];
-let totalAmount = 0;
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app); // Get reference to Firestore using initialized 'app'
 
-const categorySelect = document.getElementById('category-select');
-const amountInput = document.getElementById('amount-input');
-const dateInput = document.getElementById('date-input');
-const addBtn = document.getElementById('add-btn');
-const expensesTableBody = document.getElementById('expnese-table-body');
-const totalAmountCell = document.getElementById('total-amount');
+// Assuming 'app' is initialized elsewhere in your code
 
-addBtn.addEventListener('click', function() {
-    const category = categorySelect.value;
-    const amount = Number(amountInput.value);
-    const date = dateInput.value;
+const expenseForm = document.querySelector('.input-section');
+const expenseTableBody = document.getElementById('expnese-table-body');
+const totalAmountDisplay = document.getElementById('total-amount');
 
-    if (category === '') {
-        alert('Please select a category');
-        return;
+// Function to add expense to Firestore
+const addExpense = async (category, amount, date) => {
+    try {
+        const docRef = await addDoc(collection(db, 'expenses'), {
+            category,
+            amount,
+            date
+        });
+        console.log("Expense added with ID: ", docRef.id);
+    } catch (e) {
+        console.error("Error adding expense: ", e);
     }
-    if (isNaN(amount) || amount <=0 ) {
-        alert('Please enter a valid amoun')
-        return;
-    }
-    if(date === '') {
-        alert('Please select a date')
-        return;
-    }
-    expenses.push({category, amount, date});
+}
 
-    totalAmount += amount;
-    totalAmountCell.textContent = totalAmount;
-
-    const newRow = expensesTableBody.insertRow();
-
-    const categoryCell = newRow.insertCell();
-    const amountCell = newRow.insertCell();
-    const dateCell = newRow.insertCell();
-    const deleteCell = newRow.insertCell();
-    const deleteBtn = document.createElement('button');
-
-    deleteBtn.textContent = 'Delete';
-    deleteBtn.classList.add('delete-btn');
-    deleteBtn.addEventListener('click', function() {
-        expenses.splice(expenses.indexOf(expense), 1);
-
-        totalAmount -= expense.amount;
-        totalAmountCell.textContent = totalAmount;
-
-        expensesTableBody.removeChild(newRow);
+// Function to update UI with expenses fetched from Firestore
+// Function to update UI with expenses fetched from Firestore
+// Function to update UI with expenses fetched from Firestore
+// Function to update UI with expenses fetched from Firestore
+const updateExpenseList = (snapshot) => {
+    expenseTableBody.innerHTML = '';
+    let totalAmount = 0;
+    snapshot.forEach((doc) => {
+        const expense = doc.data();
+        // Parse expense amount as a number
+        const amount = parseFloat(expense.amount);
+        totalAmount += amount; // Add parsed amount to total
+        expenseTableBody.innerHTML += `
+            <tr>
+                <td>${expense.category}</td>
+                <td>${amount}</td>
+                <td>${expense.date}</td>
+                <td><button onclick="deleteExpense('${doc.id}')">Delete</button></td>
+            </tr>
+        `;
     });
+    // Display the total amount as currency
+    totalAmountDisplay.textContent = totalAmount.toLocaleString('en-US', { style: 'currency', currency: 'INR' });
+}
 
-    const expense = expenses[expenses.length - 1];
-    categoryCell.textContent = expense.category;
-    amountCell.textContent = expense.amount;
-    dateCell.textContent = expense.date;
-    deleteCell.appendChild(deleteBtn);
 
+// Function to delete an expense from Firestore
+const deleteExpense = async (id) => {
+    try {
+        await deleteDoc(doc(db, 'expenses', id));
+        console.log("Expense deleted successfully");
+    } catch (e) {
+        console.error("Error deleting expense: ", e);
+    }
+}
+
+// Event listener for Add button
+document.getElementById('add-btn').addEventListener('click', () => {
+    const category = document.getElementById('category-select').value;
+    const amount = parseFloat(document.getElementById('amount-input').value);
+    const date = document.getElementById('date-input').value;
+    if (category && amount && date) {
+        addExpense(category, amount, date);
+        expenseForm.reset();
+    } else {
+        alert('Please fill in all fields.');
+    }
 });
 
-for (const expense of expenses) {
-    totalAmount += expense.amount;
-    totalAmountCell.textContent = totalAmount;
-
-    const newRow = expensesTableBody.inserRow();
-    const categoryCell = newRow.insertCell();
-    const amountCell = newRow.insertCell();
-    const dateCell = newRow.insertCell();
-    const deleteCell = newRow.insertCell();
-    const deleteBtn = document.createElement('button');
-    deleteBtn.textContent = 'Delete';
-    deleteBtn.classList.add('delete-btn');
-    deleteBtn.addEventListener('click', function() {
-        expenses.splice(expenses.indexOf(expense), 1);
-
-        totalAmount -= expense.amount;
-        totalAmountCell.textContent = totalAmount;
-
-        expensesTableBody.removeChild(newRow);
-    });
-    categoryCell.textContent = expense.category;
-    amountCell.textContent = expense.amount;
-    dateCell.textContent = expense.date;
-    deleteCell.appendChild(deleteBtn);
-}
+// Realtime listener for expense changes
+const q = query(collection(db, 'expenses'), orderBy('date'));
+const unsubscribe = onSnapshot(q, (snapshot) => {
+    updateExpenseList(snapshot);
+});
